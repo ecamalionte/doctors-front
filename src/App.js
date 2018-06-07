@@ -3,6 +3,28 @@ import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
+
+    constructor(){
+        super();
+        this.state = { backend_connection: '' };
+    }
+
+    componentWillMount(){
+        let url = 'http://localhost:4000/api';
+        let options = {
+            mode: 'cors',
+            headers:{
+                'Access-Control-Allow-Origin': '*'
+            },
+            contentType: 'application/json'
+        };
+
+        fetch(url, options)
+            .then(response => { console.log(response);})
+            .catch(error => {console.log(error);});
+
+    }
+
   render() {
     return (
       <div className="App">
@@ -15,6 +37,10 @@ class App extends Component {
         </p>
         <p className="App-intro">
             The next step will be start the backend <code>../doctors-api/ mix phoenix.server</code> on localhost:4000 and fetch information
+        </p>
+
+        <p className="App-intro">
+            {this.state.backend_connection}
         </p>
       </div>
     );
