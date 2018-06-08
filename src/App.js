@@ -6,23 +6,16 @@ class App extends Component {
 
     constructor(){
         super();
-        this.state = { backend_connection: '' };
+        this.state = { backend_connection: ''};
     }
 
     componentWillMount(){
         let url = 'http://localhost:4000/api';
-        let options = {
-            mode: 'cors',
-            headers:{
-                'Access-Control-Allow-Origin': '*'
-            },
-            contentType: 'application/json'
-        };
 
-        fetch(url, options)
-            .then(response => { console.log(response);})
-            .catch(error => {console.log(error);});
-
+        fetch(url)
+            .then(response => { return response.json(); } )
+            .then(json => { this.setState({backend_connection: json.data }); } )
+            .catch(error => { console.log(error); });
     }
 
   render() {
@@ -36,11 +29,14 @@ class App extends Component {
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
         <p className="App-intro">
-            The next step will be start the backend <code>../doctors-api/ mix phoenix.server</code> on localhost:4000 and fetch information
+            Start the backend <code>doctors_api/ mix phoenix.server</code> on localhost:4000
         </p>
 
         <p className="App-intro">
-            {this.state.backend_connection}
+            Backend Connection Message:
+            <span className="Connection-ok">
+            { this.state.backend_connection }
+            </span>
         </p>
       </div>
     );
