@@ -21,7 +21,7 @@ class Chat extends Component {
             .receive("ok", response => { console.log("Joined successfully", response); });
         this.channel.on("new_message", payload => {
             this.setState({
-                serverMessages: this.state.userMessages.concat(payload.body)
+                serverMessages: this.state.serverMessages.concat(payload.body)
             });
             console.log("server messages: " + this.state.serverMessages);
         });
