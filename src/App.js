@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Chat from './components/Chat.js';
 
 class App extends Component {
 
@@ -38,7 +39,10 @@ class App extends Component {
             { this.state.backend_connection }
             </span>
         </p>
+
+        <Chat/>
       </div>
+
     );
   }
 }
