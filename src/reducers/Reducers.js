@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-import { addMessageReducer } from './addMessageReducer';
+import { chatMessageReducer } from './chatMessageReducer';
 import { apiMessageReducer } from './apiMessageReducer';
 
 export const Reducers = combineReducers({
-  addMessage: addMessageReducer,
+  chatReducer: chatMessageReducer,
   getAPIMessage: apiMessageReducer
 })

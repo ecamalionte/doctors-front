@@ -3,7 +3,7 @@ import { Container } from 'semantic-ui-react'
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchAPIMessage } from './actions/api'
+import { fetchAPIMessage } from './actions/Api'
 
 import ApplicationMenu from './components/ApplicationMenu'
 import ApplicationFooter from './components/ApplicationFooter'
@@ -41,9 +41,7 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = store => ({
-  api_connection: store.getAPIMessage.api_connection
-})
+const mapStateToProps = store => ({ api_connection: store.getAPIMessage.api_connection })
 
 const mapDispatchToProps = dispatch => bindActionCreators({ fetchAPIMessage }, dispatch)
 

@@ -1,12 +1,14 @@
-import { ADD_USER_MESSAGE, ADD_SERVER_MESSAGE } from '../actions/ActionTypes'
+import {
+  ADD_USER_MESSAGE,
+  ADD_SERVER_MESSAGE
+} from '../actions/ActionTypes'
 
 const initialState = {
-  inputMessage: '',
   userMessages: [],
   serverMessages: []
 }
 
-export const addMessageReducer = (state = initialState, action) => {
+export const chatMessageReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_USER_MESSAGE:
       return {

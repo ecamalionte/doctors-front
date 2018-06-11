@@ -9,12 +9,12 @@ const ApplicationAlertMessage = ({title, message, status}) => {
     content: message
   }
 
-  if (status == 'error'){
+  if (status === 'error'){
     message_props.negative = true
     message_props.icon = 'warning sign'
   }
 
-  if (status == 'success'){
+  if (status === 'success'){
     message_props.info = true
     message_props.icon = 'info circle'
   }

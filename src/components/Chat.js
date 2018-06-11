@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import { Socket } from 'phoenix';
 import { Feed, Grid, Button, TextArea, Form  } from 'semantic-ui-react'
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { addUserMessage, addServerMessage } from '../actions/Chat'
+
 class Chat extends Component {
 
   constructor(){
     super();
-    this.state = {
-      inputMessage: '',
-      userMessages: [],
-      serverMessages: []
-    };
+    this.state = { inputMessage: '' }
 
     let url = "ws://localhost:4000/socket";
     let socket = new Socket(url, {params: {token: window.userToken}});
@@ -22,29 +22,26 @@ class Chat extends Component {
       .receive("ok", response => { console.log("Joined successfully", response); });
 
     this.channel.on("new_message", payload => {
-      this.setState({
-        serverMessages: this.state.serverMessages.concat(payload.body)
-      });
-      console.log("server messages: " + this.state.serverMessages);
+      this.props.addServerMessage(payload.body)
     });
   }
 
   handleSubmit(event){
-    event.preventDefault();
-    this.channel.push("new_message", {body: this.state.inputMessage});
-    this.setState({
-      userMessages: this.state.userMessages.concat(this.state.inputMessage),
-      inputMessage: ""
-    });
+    event.preventDefault()
+    this.channel.push("new_message", {body: this.state.inputMessage})
+    this.props.addUserMessage(this.state.inputMessage)
+    this.setState({ inputMessage: "" })
   }
 
   handleInputMessage(event){
-    this.setState({inputMessage: event.target.value});
+    this.setState({inputMessage: event.target.value})
   }
 
   render() {
 
-    let server_events = this.state.serverMessages.map(message => (
+    let { serverMessages, userMessages } = this.props
+
+    let server_events = serverMessages.map(message => (
       {
         image: 'https://react.semantic-ui.com/assets/images/avatar/small/elliot.jpg',
         summary: 'Server',
@@ -53,7 +50,7 @@ class Chat extends Component {
       }
     ))
 
-    let user_events = this.state.userMessages.map(message => (
+    let user_events = userMessages.map(message => (
       {
         image: 'https://react.semantic-ui.com/assets/images/avatar/small/justen.jpg',
         summary: 'GenericUsername',
@@ -92,4 +89,16 @@ class Chat extends Component {
     }
   }
 
-export default Chat;
+const mapStateToProps = store => ({
+  userMessages: store.chatReducer.userMessages,
+  serverMessages: store.chatReducer.serverMessages
+})
+
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators({
+    addUserMessage,
+    addServerMessage
+  }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Chat)
