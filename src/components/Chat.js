@@ -9,27 +9,33 @@ import { addUserMessage, addServerMessage } from '../actions/Chat'
 class Chat extends Component {
 
   constructor(){
-    super();
-    this.state = { inputMessage: '' }
+    super()
+    this.state = { inputMessage: '', user_id: randomId() }
 
-    let url = "ws://localhost:4000/socket";
-    let socket = new Socket(url, {params: {token: window.userToken}});
+    let url = "ws://localhost:4000/socket"
+    let socket = new Socket(url, {params: {token: window.userToken}})
 
-    socket.connect();
+    socket.connect()
 
-    this.channel = socket.channel("room:lobby", {});
+    this.channel = socket.channel("room:lobby", {})
+
     this.channel.join()
-      .receive("ok", response => { console.log("Joined successfully", response); });
+      .receive("ok", response => { console.log("Joined successfully", response); })
 
     this.channel.on("new_message", payload => {
-      this.props.addServerMessage(payload.body)
-    });
+      if(payload.user_id != this.state.user_id){
+        this.props.addServerMessage(payload.body)
+      }
+    })
   }
 
   handleSubmit(event){
     event.preventDefault()
-    this.channel.push("new_message", {body: this.state.inputMessage})
-    this.props.addUserMessage(this.state.inputMessage)
+    let message = { user_id: this.state.user_id, body: this.state.inputMessage }
+
+    this.channel.push("new_message", message)
+    this.props.addUserMessage(message.body)
+
     this.setState({ inputMessage: "" })
   }
 
@@ -88,6 +94,10 @@ class Chat extends Component {
       );
     }
   }
+
+const randomId = () => {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+}
 
 const mapStateToProps = store => ({
   userMessages: store.chatReducer.userMessages,
