@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Socket } from 'phoenix';
-import UserMessage from './UserMessage.js';
-import ServerMessage from './ServerMessages.js';
+import { Feed, Grid, Button, TextArea, Form  } from 'semantic-ui-react'
 
 class Chat extends Component {
 
@@ -44,44 +43,53 @@ class Chat extends Component {
   }
 
   render() {
-    const userMessages = this.state.userMessages.map((message, index) =>
-      <UserMessage key={index}
-        username= {"GenericUser"}
-        message={message} />
-      );
 
-    const serverMessages = this.state.serverMessages.map((message, index) =>
-      <ServerMessage key = { index }
-        username = { "Server" }
-        message = { message } />);
+    let server_events = this.state.serverMessages.map(message => (
+      {
+        image: 'https://react.semantic-ui.com/assets/images/avatar/small/elliot.jpg',
+        summary: 'Server',
+        extraText: message,
+        meta: (new Date).toLocaleDateString()
+      }
+    ))
+
+    let user_events = this.state.userMessages.map(message => (
+      {
+        image: 'https://react.semantic-ui.com/assets/images/avatar/small/justen.jpg',
+        summary: 'GenericUsername',
+        extraText: message,
+        meta: (new Date).toLocaleDateString()
+      }
+    ))
+
+    let feed_events = user_events.concat(server_events)
 
     return (
-      <div className="App">
-        <h1> Instant Message </h1>
+      <Grid>
+        <Grid.Row>
+          <Grid.Column width={8}>
+            <h1> Instant Message </h1>
 
-        {userMessages}
-        {serverMessages}
+            <Feed events={feed_events} />
 
-        <div>
-          <form onSubmit={this.handleSubmit.bind(this)}>
-            <div className="field">
-              <label className="label"style={{ textAlign: "left" }}>
-                GenericUsername:
-              </label>
-
-              <div className="control">
-                <input className="input" type="text" style={{ marginTop: "10px"}} value={this.state.inputMessage } onChange={ this.handleInputMessage.bind(this) } />
-              </div>
+            <div>
+              <Form onSubmit={this.handleSubmit.bind(this)}>
+                <Form.Field
+                  control={TextArea}
+                  label='GenericUsername:'
+                  value={this.state.inputMessage }
+                  onChange={ this.handleInputMessage.bind(this) }
+                />
+                <Button type='submit'>Submit</Button>
+              </Form>
             </div>
 
-            <button type="submit" value="Submit" className="button is-primary" style={{ marginTop: "10px" }} >
-              Send Message
-            </button>
-          </form>
-        </div>
-      </div>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+
       );
     }
-}
+  }
 
 export default Chat;
