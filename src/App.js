@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import { Container } from 'semantic-ui-react'
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { fetchAPIMessage } from './actions/api'
+
 import ApplicationMenu from './components/ApplicationMenu'
 import ApplicationFooter from './components/ApplicationFooter'
 import ApplicationAlertMessage from './components/ApplicationAlertMessage'
@@ -8,28 +12,18 @@ import Chat from './components/Chat'
 
 class App extends Component {
 
-  constructor(){
-    super();
-    this.state = {
-      api_connection: {}
-    };
-  }
-
   componentWillMount(){
-    let url = 'http://localhost:4000/api'
-
-    fetch(url)
-      .then(response => { return response.json() })
-      .then(json => { this.setState({ api_connection: { message: json.data, status: 'success' } }) })
-      .catch(error => { this.setState({ api_connection: { message: error.message, status: 'error' } }) })
+    this.props.fetchAPIMessage();
   }
 
   render() {
 
+    const { api_connection } = this.props
+
     let message_props = {
       title: 'API Connection',
-      message: this.state.api_connection.message,
-      status: this.state.api_connection.status
+      message: api_connection.message,
+      status: api_connection.status
     }
 
     return (
@@ -47,4 +41,10 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = store => ({
+  api_connection: store.getAPIMessage.api_connection
+})
+
+const mapDispatchToProps = dispatch => bindActionCreators({ fetchAPIMessage }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
