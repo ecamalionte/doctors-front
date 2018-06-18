@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Socket } from 'phoenix';
-import { Feed, Grid, Button, TextArea, Form  } from 'semantic-ui-react'
+import { Feed, Grid, Button, TextArea, Form, Message  } from 'semantic-ui-react'
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,7 +10,7 @@ class Chat extends Component {
 
   constructor(){
     super()
-    this.state = { inputMessage: '', user_id: randomId() }
+    this.state = { inputMessage: '', user_id: randomId(), typingMessage: '' }
 
     let url = "ws://localhost:4000/socket"
     let socket = new Socket(url, {params: {token: window.userToken}})
@@ -27,6 +27,16 @@ class Chat extends Component {
         this.props.addServerMessage(payload.body)
       }
     })
+
+    this.channel.on("typing", payload => {
+      this.setState({typingMessage: payload.body})
+      console.log(payload.body)
+      this.cleanTypingMessageAfter(2)
+    })
+  }
+
+  cleanTypingMessageAfter(seconds){
+      setTimeout(() => {this.setState({typingMessage: ''}) }, seconds * 1000);
   }
 
   handleSubmit(event){
@@ -41,6 +51,8 @@ class Chat extends Component {
 
   handleInputMessage(event){
     this.setState({inputMessage: event.target.value})
+    let user = { user_id: this.state.user_id }
+    this.channel.push("typing", user)
   }
 
   render() {
@@ -85,6 +97,11 @@ class Chat extends Component {
                 />
                 <Button type='submit'>Submit</Button>
               </Form>
+            </div>
+            <div>
+              <Message>
+                <p>{this.state.typingMessage}</p>
+              </Message>
             </div>
 
           </Grid.Column>
