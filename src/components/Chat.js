@@ -1,6 +1,15 @@
 import React, { Component } from 'react';
 import { Socket } from 'phoenix';
-import { Feed, Grid, Button, TextArea, Form, Message  } from 'semantic-ui-react'
+import {
+  Feed,
+  Grid,
+  Button,
+  TextArea,
+  Form,
+  Message,
+  Segment
+} from 'semantic-ui-react'
+import IsTyping from './IsTyping'
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -23,15 +32,14 @@ class Chat extends Component {
       .receive("ok", response => { console.log("Joined successfully", response); })
 
     this.channel.on("new_message", payload => {
-      if(payload.user_id != this.state.user_id){
+      if(payload.user_id != this.state.user_id)
         this.props.addServerMessage(payload.body)
-      }
     })
 
     this.channel.on("typing", payload => {
       this.setState({typingMessage: payload.body})
       console.log(payload.body)
-      this.cleanTypingMessageAfter(2)
+      this.cleanTypingMessageAfter(4)
     })
   }
 
@@ -87,7 +95,8 @@ class Chat extends Component {
 
             <Feed events={feed_events} />
 
-            <div>
+            <Segment>
+              <IsTyping user={this.state.typingMessage} />
               <Form onSubmit={this.handleSubmit.bind(this)}>
                 <Form.Field
                   control={TextArea}
@@ -97,12 +106,7 @@ class Chat extends Component {
                 />
                 <Button type='submit'>Submit</Button>
               </Form>
-            </div>
-            <div>
-              <Message>
-                <p>{this.state.typingMessage}</p>
-              </Message>
-            </div>
+            </Segment>
 
           </Grid.Column>
         </Grid.Row>
