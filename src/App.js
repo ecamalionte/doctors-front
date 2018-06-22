@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Container } from 'semantic-ui-react'
 
+import { Route } from 'react-router-dom'
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchAPIMessage } from './actions/Api'
@@ -29,10 +31,12 @@ class App extends Component {
     return (
       <div>
         <ApplicationMenu/>
-
         <Container style={{ marginTop: '7em'  }}>
           <ApplicationAlertMessage {...message_props}/>
-          <Chat/>
+
+
+          <Route path='/chat' exact component={Chat}/>
+
         </Container>
 
         <ApplicationFooter/>
