@@ -6,7 +6,7 @@ import ApplicationMenu from '../ApplicationMenu'
 import ApplicationFooter from '../ApplicationFooter'
 
 import Chat from '../Chat'
-import APIMessage from '../APIMessage'
+import APIMessage from '../messages/APIMessage'
 
 const ChatPage = () => {
   return(

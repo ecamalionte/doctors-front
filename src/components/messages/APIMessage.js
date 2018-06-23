@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchAPIMessage } from '../actions/Api'
+import { fetchAPIMessage } from '../../actions/Api'
 
 import ApplicationAlertMessage from './ApplicationAlertMessage'
 
