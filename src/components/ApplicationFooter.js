@@ -2,11 +2,9 @@ import React from 'react'
 import {
   Segment,
   Container,
-  Header,
   List,
   Divider,
   Image,
-  Menu,
 } from 'semantic-ui-react'
 
 const ApplicationFooter = () => (

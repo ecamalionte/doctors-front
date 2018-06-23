@@ -3,9 +3,9 @@ import { Label } from 'semantic-ui-react'
 import PropTypes from 'prop-types'
 
 const IsTyping = ({user}) => {
-  if(user != '')
+  if(user !== '')
     return (
-      <Label as='TypingLabel' color='teal' ribbon='right'>
+      <Label as='span' color='teal' ribbon='right'>
         {user}
         <Label.Detail>is typing ...</Label.Detail>
       </Label>

@@ -1,14 +1,6 @@
 import React, { Component } from 'react';
 import { Socket } from 'phoenix';
-import {
-  Feed,
-  Grid,
-  Button,
-  TextArea,
-  Form,
-  Message,
-  Segment
-} from 'semantic-ui-react'
+import { Feed, Grid, Button, TextArea, Form, Segment } from 'semantic-ui-react'
 import IsTyping from './IsTyping'
 
 import { connect } from 'react-redux';
@@ -32,7 +24,7 @@ class Chat extends Component {
       .receive("ok", response => { console.log("Joined successfully", response); })
 
     this.channel.on("new_message", payload => {
-      if(payload.user_id != this.state.user_id)
+      if(payload.user_id !== this.state.user_id)
         this.props.addServerMessage(payload.body)
     })
 
@@ -72,7 +64,7 @@ class Chat extends Component {
         image: 'https://react.semantic-ui.com/assets/images/avatar/small/elliot.jpg',
         summary: 'Server',
         extraText: message,
-        meta: (new Date).toLocaleDateString()
+        meta: (new Date()).toLocaleDateString()
       }
     ))
 
@@ -81,7 +73,7 @@ class Chat extends Component {
         image: 'https://react.semantic-ui.com/assets/images/avatar/small/justen.jpg',
         summary: 'GenericUsername',
         extraText: message,
-        meta: (new Date).toLocaleDateString()
+        meta: (new Date()).toLocaleDateString()
       }
     ))
 
