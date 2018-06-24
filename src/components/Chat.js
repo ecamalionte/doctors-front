@@ -11,7 +11,7 @@ class Chat extends Component {
 
   constructor(){
     super()
-    this.state = { inputMessage: '', user_id: randomId(), typingMessage: '' }
+    this.state = { inputMessage: '' }
 
     let url = "ws://localhost:4000/socket"
     let socket = new Socket(url, {params: {token: window.userToken}})
@@ -21,49 +21,40 @@ class Chat extends Component {
     this.channel = socket.channel("room:lobby", {})
 
     this.channel.join()
-      .receive("ok", response => { console.log("Joined successfully", response); })
+      .receive("ok", response => console.log("Joined successfully", response))
 
     this.channel.on("new_message", payload => {
-      if(payload.user_id !== this.state.user_id)
-        this.props.addServerMessage(payload.body)
-    })
-
-    this.channel.on("typing", payload => {
-      this.setState({typingMessage: payload.body})
-      console.log(payload.body)
-      this.cleanTypingMessageAfter(4)
+      if(payload.user.id !== this.props.user.id)
+        this.props.addServerMessage(payload)
     })
   }
 
-  cleanTypingMessageAfter(seconds){
-      setTimeout(() => {this.setState({typingMessage: ''}) }, seconds * 1000);
-  }
 
   handleSubmit(event){
     event.preventDefault()
-    let message = { user_id: this.state.user_id, body: this.state.inputMessage }
+    let message = { user: this.props.user, body: this.state.inputMessage }
 
     this.channel.push("new_message", message)
-    this.props.addUserMessage(message.body)
+    this.props.addUserMessage(message)
 
     this.setState({ inputMessage: "" })
   }
 
   handleInputMessage(event){
     this.setState({inputMessage: event.target.value})
-    let user = { user_id: this.state.user_id }
+    let user = { user: this.props.user }
     this.channel.push("typing", user)
   }
 
   render() {
 
-    let { serverMessages, userMessages } = this.props
+    let { serverMessages, userMessages, user } = this.props
 
     let server_events = serverMessages.map(message => (
       {
         image: 'https://react.semantic-ui.com/assets/images/avatar/small/elliot.jpg',
-        summary: 'Server',
-        extraText: message,
+        summary: message.user.name,
+        extraText: message.body,
         meta: (new Date()).toLocaleDateString()
       }
     ))
@@ -71,8 +62,8 @@ class Chat extends Component {
     let user_events = userMessages.map(message => (
       {
         image: 'https://react.semantic-ui.com/assets/images/avatar/small/justen.jpg',
-        summary: 'GenericUsername',
-        extraText: message,
+        summary: message.user.name,
+        extraText: message.body,
         meta: (new Date()).toLocaleDateString()
       }
     ))
@@ -88,14 +79,13 @@ class Chat extends Component {
             <Feed events={feed_events} />
 
             <Segment>
-              <IsTyping user={this.state.typingMessage} />
+              <IsTyping channel={this.channel} user={this.props.user} />
               <Form onSubmit={this.handleSubmit.bind(this)}>
                 <Form.Field
                   control={TextArea}
-                  label='GenericUsername:'
+                  label={`${ user.name }:`}
                   value={this.state.inputMessage }
-                  onChange={ this.handleInputMessage.bind(this) }
-                />
+                  onChange={ this.handleInputMessage.bind(this) } />
                 <Button type='submit'>Submit</Button>
               </Form>
             </Segment>
@@ -103,18 +93,14 @@ class Chat extends Component {
           </Grid.Column>
         </Grid.Row>
       </Grid>
-
-      );
+      )
     }
   }
 
-const randomId = () => {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-}
-
 const mapStateToProps = store => ({
   userMessages: store.chatReducer.userMessages,
-  serverMessages: store.chatReducer.serverMessages
+  serverMessages: store.chatReducer.serverMessages,
+  user: store.auth.auth_data.user
 })
 
 const mapDispatchToProps = dispatch => {

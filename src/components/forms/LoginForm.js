@@ -13,17 +13,30 @@ class LoginForm extends Component {
     loading: false,
   }
 
+  login = () =>
+    this.props.submit(this.state.data)
+    .catch(
+      err => this.setState(
+        {
+          errors: { ...err.response.data.errors, global: 'Falha no login!' },
+          loading: false
+        }
+      )
+    )
+    .catch(() =>
+      this.setState(
+        {errors: {global: 'Erro inesperado!'}, loading: false}
+      )
+    )
+
   onSubmit = () => {
     const errors = this.validate(this.state.data)
     this.setState({errors})
 
-    if(Object.keys(errors).length === 0 )
-      this.props.submit(this.state.data)
-      .catch(
-        err => this.setState(
-          { errors: { ...err.response.data.errors, global: 'Falha no login!' } }
-        )
-      )
+    if(Object.keys(errors).length === 0 ) {
+      this.setState({loading: true})
+      this.login()
+    }
   }
 
   validate = data => {
@@ -41,7 +54,7 @@ class LoginForm extends Component {
     })
 
   render() {
-    const { data, errors } = this.state
+    const { data, errors, loading } = this.state
 
     return(
       <div>
@@ -51,7 +64,7 @@ class LoginForm extends Component {
           { errors.global }
         </Message>
         }
-        <Form onSubmit={this.onSubmit} size='large' className='attached'>
+        <Form onSubmit={this.onSubmit} size='large' className='attached' loading={loading}>
           <Segment stacked>
             <Form.Input
               error={!!errors.login}

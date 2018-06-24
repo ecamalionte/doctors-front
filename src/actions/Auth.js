@@ -10,5 +10,5 @@ export const userLoggedIn = auth_data => ({
 export const login = credentials => dispatch =>
   Api.user.login(credentials)
   .then(
-    auth_data => dispatch(userLoggedIn(auth_data))
+    auth_data => dispatch(userLoggedIn(auth_data.data))
   )
