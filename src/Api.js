@@ -8,10 +8,13 @@ const connection = () =>
 const user_login = credentials =>
   axios.post(`${api_url}/auth`, { credentials })
 
+const authByToken = token =>
+  axios.post(`${api_url}/auth/token`, { token: token })
 
 export default {
   connection: connection,
   user: {
     login: user_login,
+    authByToken: authByToken,
   }
 }

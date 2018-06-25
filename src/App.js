@@ -1,42 +1,27 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Route } from 'react-router-dom'
+
+import AuthRoute from './routes/AuthRoute'
+import GuestRoute from './routes/GuestRoute'
 
 import ChatPage from './components/pages/ChatPage'
 import LoginPage from './components/pages/LoginPage'
 
-class App extends Component {
+import PropTypes from 'prop-types'
 
-  render() {
+const App = ({location}) => (
+  <div>
+    <AuthRoute path='/chat' exact component={ChatPage} location={location} />
+    <GuestRoute path='/login' exact component={LoginPage} location={location} />
 
-    return (
-      <div>
+    <Route path='/' exact render={ () => ( <div> <p>Wellcome</p> <ul> <li> <a href='/login'>Login</a> </li> <li> <a href='/chat'>Chat</a> </li> </ul> </div> ) } location={location} />
+  </div>
+  )
 
-        <Route path='/chat' exact component={ChatPage} />
-        <Route path='/login' exact component={LoginPage} />
 
-        <Route path='/' exact
-          render={
-            () => {
-              return(
-              <div>
-                <p>Wellcome</p>
-                <ul>
-                  <li>
-                    <a href='/login'>Login</a>
-                  </li>
-                  <li>
-                    <a href='/chat'>Chat</a>
-                  </li>
-                </ul>
-              </div>
-
-              )
-            }
-          }
-        />
-      </div>
-      );
-  }
+App.propTypes = {
+  location: PropTypes.shape({
+    pathname: PropTypes.string.isRequired
+  }).isRequired
 }
-
 export default App
