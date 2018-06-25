@@ -1,7 +1,7 @@
 import { UPDATE_API_MESSAGE } from '../actions/ActionTypes'
 
 const initialState = {
-  api_connection: { message: 'Conecting to API. Please wait...' }
+  message: 'Conecting to API. Please wait...'
 }
 
 export const apiMessageReducer = (state = initialState, action) => {
@@ -9,7 +9,7 @@ export const apiMessageReducer = (state = initialState, action) => {
     case UPDATE_API_MESSAGE:
       return {
         ...state,
-        api_connection: action.api_connection
+        ...action.data
       }
     default:
       return state;

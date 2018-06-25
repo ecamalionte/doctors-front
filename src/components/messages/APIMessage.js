@@ -24,7 +24,7 @@ class APIMessage extends Component {
 
 }
 
-const mapStateToProps = store => ({ api_connection: store.getAPIMessage.api_connection })
+const mapStateToProps = store => ({ api_connection: store.APIConnection })
 const mapDispatchToProps = dispatch => bindActionCreators({ fetchAPIMessage }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(APIMessage)

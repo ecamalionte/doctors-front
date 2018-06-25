@@ -2,13 +2,13 @@ import { USER_LOGGED_IN } from './ActionTypes'
 import Api from '../Api.js'
 
 
-export const userLoggedIn = auth_data => ({
+export const userLoggedIn = data => ({
   type: USER_LOGGED_IN,
-  auth_data
+  data
 })
 
 export const login = credentials => dispatch =>
   Api.user.login(credentials)
   .then(
-    auth_data => dispatch(userLoggedIn(auth_data.data))
+    auth => dispatch(userLoggedIn(auth.data))
   )

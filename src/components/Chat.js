@@ -98,9 +98,9 @@ class Chat extends Component {
   }
 
 const mapStateToProps = store => ({
-  userMessages: store.chatReducer.userMessages,
-  serverMessages: store.chatReducer.serverMessages,
-  user: store.auth.auth_data.user
+  userMessages: store.chat.userMessages,
+  serverMessages: store.chat.serverMessages,
+  user: store.auth.user
 })
 
 const mapDispatchToProps = dispatch => {

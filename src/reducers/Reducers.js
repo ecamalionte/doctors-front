@@ -5,6 +5,6 @@ import { authReducer } from './authReducer'
 
 export const Reducers = combineReducers({
   auth: authReducer,
-  chatReducer: chatMessageReducer,
-  getAPIMessage: apiMessageReducer
+  chat: chatMessageReducer,
+  APIConnection: apiMessageReducer
 })

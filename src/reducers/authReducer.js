@@ -1,13 +1,11 @@
 import { USER_LOGGED_IN } from '../actions/ActionTypes'
 
 const initialState = {
-  auth_data: {
-    user: {
-      id: '',
-      name: ''
-    },
-    token: ''
-  }
+  user: {
+    id: '',
+    name: ''
+  },
+  token: null
 }
 
 export const authReducer = ( state = initialState, action ) => {
@@ -15,7 +13,7 @@ export const authReducer = ( state = initialState, action ) => {
     case USER_LOGGED_IN:
       return {
         ...state,
-        auth_data: action.auth_data
+        ...action.data
       }
     default:
       return state

@@ -1,12 +1,12 @@
 import { UPDATE_API_MESSAGE } from './ActionTypes'
 import Api from '../Api.js'
 
-export function updateAPIMessage(api_connection) {
-  return { type: UPDATE_API_MESSAGE, api_connection }
+export function updateAPIMessage(data) {
+  return { type: UPDATE_API_MESSAGE, data }
 }
 
 export function fetchAPIMessageBegin(message) {
-  return { type: UPDATE_API_MESSAGE, api_connection: { message: 'Begin Conecting to API. Please wait...' } }
+  return { type: UPDATE_API_MESSAGE, data: { message: 'Begin Conecting to API. Please wait...' } }
 }
 
 export function fetchAPIMessage() {
