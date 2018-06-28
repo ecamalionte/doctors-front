@@ -31,10 +31,10 @@ export const logout = () => dispatch => {
   dispatch(userLogOut())
 }
 
-export const getAuthByToken = token => dispatch =>
-  Api.user.authByToken(token).then(
+export const getAuthByToken = (token, user_id) => dispatch =>
+  Api.user.authByToken(token, user_id).then(
     auth => {
-      Auth.storeToken(auth.data.token)
+      Auth.storeToken(token)
       dispatch(userLoggedIn(auth.data))
     }
   )

@@ -6,10 +6,14 @@ const connection = () =>
   axios.get(api_url)
 
 const user_login = credentials =>
-  axios.post(`${api_url}/auth`, { credentials })
+  axios.post(`${api_url}/accounts/login`, credentials)
 
-const authByToken = token =>
-  axios.post(`${api_url}/auth/token`, { token: token })
+const auth_header = token => (
+  { headers: { authorization: `Bearer: ${token}` } }
+)
+
+const authByToken = (token, user_id) =>
+  axios.get(`${api_url}/users/${user_id}`, auth_header(token))
 
 export default {
   connection: connection,
