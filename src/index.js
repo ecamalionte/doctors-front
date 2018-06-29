@@ -15,7 +15,7 @@ import { BrowserRouter, Route } from 'react-router-dom'
 
 
 if(Auth.hasToken)
-  Store.dispatch(setAuthToken(Auth.storagedToken))
+  Store.dispatch(setAuthToken(Auth.storagedToken()))
 
 ReactDOM.render(
   <BrowserRouter>

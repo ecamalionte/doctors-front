@@ -1,17 +1,27 @@
-import { Socket } from 'phoenix';
+import { Socket } from 'phoenix'
 import Auth from './Auth'
 
 const url = "ws://localhost:4000/socket"
 
+const auth_params = () => (
+  { params: { token: Auth.storagedToken() } }
+)
+
 class ChatSocket {
 
   constructor() {
-    this.socket = new Socket(url, {params: {token: window.userToken}})
+    this.socket = new Socket(url, auth_params())
     this.socket.connect()
 
-    this.channel = this.socket.channel("room:lobby", {})
+    this.channel = this.socket.channel("room:lobby", auth_params().params)
+
     this.channel.join()
-      .receive("ok", response => console.log("Joined successfully", response))
+          .receive("ok", ({messages}) => console.log("Channel up", messages) )
+          .receive("error", ({reason}) => console.log("failed join channel", reason) )
+          .receive("timeout", () => console.log("Networking issue. Still waiting...") )
+
+    this.channel.onError(e => console.log("something went wrong", e))
+    this.channel.onClose(e => console.log("channel closed", e))
   }
 
   pushMessage(message) {

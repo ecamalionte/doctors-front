@@ -12,7 +12,7 @@ import Auth from '../Auth'
 const AuthRoute = ({isAuthenticated, user, getAuthByToken, logout, component: Component, ...rest}) => {
 
   if(isAuthenticated && needGetUserData(user))
-    getAuthByToken(Auth.storagedToken, Auth.user_id).catch( err => logout() )
+    getAuthByToken(Auth.storagedToken(), Auth.user_id()).catch( err => logout() )
 
   return <Route
     { ...rest }
