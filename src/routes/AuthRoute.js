@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Route, Redirect } from 'react-router-dom'
 
@@ -9,17 +9,50 @@ import { getAuthByToken, logout } from '../actions/Auth'
 
 import Auth from '../Auth'
 
-const AuthRoute = ({isAuthenticated, user, getAuthByToken, logout, component: Component, ...rest}) => {
+class AuthRoute extends Component {
 
-  if(isAuthenticated && needGetUserData(user))
-    getAuthByToken(Auth.storagedToken(), Auth.user_id()).catch( err => logout() )
+  state = { ready: false }
 
-  return <Route
-    { ...rest }
-    render={ props => isAuthenticated ? <Component { ...props }/> : <Redirect to='/login' /> } />
+  getUserData = () => {
+    this.props.getAuthByToken(Auth.storagedToken(), Auth.user_id())
+      .then( data => this.setState({ ready: true }) )
+      .catch( err => {
+        this.props.logout()
+        this.setState({ ready: false, error: 'getUserData' })
+      } )
+  }
+
+  needGetUserData = () => (!this.props.user.id || !this.props.user.name)
+
+  checkPath = () => (this.props.path === this.props.location.pathname)
+
+  render () {
+    console.log('render')
+    if(!this.checkPath())
+      return <div />
+
+    if(!this.props.isAuthenticated)
+      return <Redirect to='/login' />
+
+    let {
+      component: ComponentToRender,
+      isAuthenticated,
+      user,
+      getAuthByToken,
+      logout,
+      ...rest
+    } =  this.props
+
+    if(this.needGetUserData())
+      this.getUserData()
+
+    if(this.state.ready)
+      return <Route { ...rest } render={ props => <ComponentToRender { ...props }/> } />
+
+      return <div />
+    }
 }
 
-const needGetUserData = (user) => (!user.id || !user.name)
 
 AuthRoute.propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,

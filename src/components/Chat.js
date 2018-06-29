@@ -10,11 +10,11 @@ import ChatSocket from '../ChatSocket'
 
 class Chat extends Component {
 
-  constructor(){
-    super()
+  constructor(props){
+    super(props)
     this.state = { inputMessage: '' }
 
-    this.socket = new ChatSocket()
+    this.socket = new ChatSocket(this.props.user)
     this.socket.handleServerMessage(this.handleServerMsg)
   }
 

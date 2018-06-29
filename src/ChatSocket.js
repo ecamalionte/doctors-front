@@ -9,11 +9,11 @@ const auth_params = () => (
 
 class ChatSocket {
 
-  constructor() {
+  constructor(user) {
     this.socket = new Socket(url, auth_params())
     this.socket.connect()
 
-    this.channel = this.socket.channel("room:lobby", auth_params().params)
+    this.channel = this.socket.channel(`room:${user.login}`, auth_params().params)
 
     this.channel.join()
           .receive("ok", ({messages}) => console.log("Channel up", messages) )
