@@ -27,7 +27,6 @@ class AuthRoute extends Component {
   checkPath = () => (this.props.path === this.props.location.pathname)
 
   render () {
-    console.log('render')
     if(!this.checkPath())
       return <div />
 

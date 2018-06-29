@@ -4,7 +4,12 @@ import IsTyping from './IsTyping'
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addUserMessage, addServerMessage } from '../actions/Chat'
+
+import {
+  addUserMessage,
+  addServerMessage,
+  fetchUserChannels
+} from '../actions/Chat'
 
 import ChatSocket from '../ChatSocket'
 
@@ -12,10 +17,16 @@ class Chat extends Component {
 
   constructor(props){
     super(props)
-    this.state = { inputMessage: '' }
+    this.state = { inputMessage: '', ready: false }
 
-    this.socket = new ChatSocket(this.props.user)
-    this.socket.handleServerMessage(this.handleServerMsg)
+    this.props.fetchUserChannels(this.props.user.id)
+      .then(
+        () => {
+          this.socket = new ChatSocket(this.props.user, this.props.user_channels)
+          this.socket.handleServerMessage(this.handleServerMsg)
+          this.setState({ready: true})
+        }
+      )
   }
 
   handleServerMsg = (data) => {
@@ -38,6 +49,9 @@ class Chat extends Component {
   }
 
   render() {
+
+    if(!this.props.user_channels.length || !this.state.ready)
+      return <div />
 
     let { serverMessages, userMessages, user } = this.props
 
@@ -91,13 +105,15 @@ class Chat extends Component {
 const mapStateToProps = store => ({
   userMessages: store.chat.userMessages,
   serverMessages: store.chat.serverMessages,
-  user: store.auth.user
+  user: store.auth.user,
+  user_channels: store.chat.user.channels
 })
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators({
     addUserMessage,
-    addServerMessage
+    addServerMessage,
+    fetchUserChannels
   }, dispatch)
 }
 
