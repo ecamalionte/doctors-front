@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Socket } from 'phoenix';
 import { Feed, Grid, Button, TextArea, Form, Segment } from 'semantic-ui-react'
 import IsTyping from './IsTyping'
 
@@ -7,34 +6,27 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { addUserMessage, addServerMessage } from '../actions/Chat'
 
+import ChatSocket from '../ChatSocket'
+
 class Chat extends Component {
 
   constructor(){
     super()
     this.state = { inputMessage: '' }
 
-    let url = "ws://localhost:4000/socket"
-    let socket = new Socket(url, {params: {token: window.userToken}})
-
-    socket.connect()
-
-    this.channel = socket.channel("room:lobby", {})
-
-    this.channel.join()
-      .receive("ok", response => console.log("Joined successfully", response))
-
-    this.channel.on("new_message", payload => {
-      if(payload.user.id !== this.props.user.id)
-        this.props.addServerMessage(payload)
-    })
+    this.socket = new ChatSocket()
+    this.socket.handleServerMessage(this.handleServerMsg)
   }
 
+  handleServerMsg = (data) => {
+    data.user.id !== this.props.user.id && this.props.addServerMessage(data)
+  }
 
   handleSubmit(event){
     event.preventDefault()
     let message = { user: this.props.user, body: this.state.inputMessage }
 
-    this.channel.push("new_message", message)
+    this.socket.pushMessage(message)
     this.props.addUserMessage(message)
 
     this.setState({ inputMessage: "" })
@@ -42,8 +34,7 @@ class Chat extends Component {
 
   handleInputMessage(event){
     this.setState({inputMessage: event.target.value})
-    let user = { user: this.props.user }
-    this.channel.push("typing", user)
+    this.socket.pushTyping({ user: this.props.user })
   }
 
   render() {
@@ -52,7 +43,7 @@ class Chat extends Component {
 
     let server_events = serverMessages.map(message => (
       {
-        image: 'https://react.semantic-ui.com/assets/images/avatar/small/elliot.jpg',
+        image: 'https://semantic-ui.com/images/avatar/small/elliot.jpg',
         summary: message.user.name,
         extraText: message.body,
         meta: (new Date()).toLocaleDateString()
@@ -61,7 +52,7 @@ class Chat extends Component {
 
     let user_events = userMessages.map(message => (
       {
-        image: 'https://react.semantic-ui.com/assets/images/avatar/small/justen.jpg',
+        image: 'https://semantic-ui.com/images/avatar/small/justen.jpg',
         summary: message.user.name,
         extraText: message.body,
         meta: (new Date()).toLocaleDateString()
@@ -79,7 +70,7 @@ class Chat extends Component {
             <Feed events={feed_events} />
 
             <Segment>
-              <IsTyping channel={this.channel} user={this.props.user} />
+              <IsTyping socket={this.socket} user={this.props.user} />
               <Form onSubmit={this.handleSubmit.bind(this)}>
                 <Form.Field
                   control={TextArea}

@@ -5,19 +5,21 @@ import PropTypes from 'prop-types'
 
 class IsTyping extends Component {
 
-  state = {
-    typingUser: ''
-  }
+  state = { typingUser: '' }
 
   constructor(props) {
     super(props)
 
-    this.props.channel.on("typing", payload => {
-      if(payload.user.id !== this.props.user.id) {
-        this.setState({typingUser: payload.user.name})
+    this.props.socket.handleUserTyping(this.handleUserTyping())
+  }
+
+  handleUserTyping(){
+    return (data) => {
+      if(data.user.id !== this.props.user.id) {
+        this.setState({typingUser: data.user.name})
         this.cleanTypingMessageAfter(4)
       }
-    })
+    }
   }
 
   cleanTypingMessageAfter(seconds){
@@ -38,7 +40,9 @@ class IsTyping extends Component {
 }
 
 IsTyping.propTypes = {
-  channel: PropTypes.object.isRequired,
+  socket: PropTypes.shape({
+    handleUserTyping: PropTypes.func.isRequired
+  }).isRequired,
   user: PropTypes.object.isRequired
 }
 
