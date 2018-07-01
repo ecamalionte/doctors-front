@@ -13,7 +13,7 @@ class ChatSocket {
     this.socket = new Socket(url, auth_params())
     this.socket.connect()
 
-    this.channel = this.socket.channel(`room:${user_channels[0].name}`, auth_params().params)
+    this.channel = this.socket.channel(user_channels[0].topic, auth_params().params)
 
     this.channel.join()
           .receive("ok", ({messages}) => console.log("Channel up", messages) )
